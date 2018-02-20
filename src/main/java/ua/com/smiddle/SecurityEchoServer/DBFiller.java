@@ -10,6 +10,7 @@ import ua.com.smiddle.logger.produser.LogProducerImpl;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -106,13 +107,18 @@ public class DBFiller {
         LogProducerImpl.logStdOut("DB_Filler", "FILL MENU proceed...");
         int sortOrder = 0;
         Query taskQuery = em.createQuery("SELECT t FROM TaskURL t WHERE t.code=:code", TaskURL.class);
+        Collection<AuthorizationType> types = em
+                .createQuery("SELECT t FROM AuthorizationType t WHERE t.type='SMIDDLE_TOKEN'", AuthorizationType.class)
+                .getResultList();
         try {
             try {
                 taskQuery.setParameter("code", "ses_test_anonymous");
                 taskQuery.getSingleResult();
             } catch (NoResultException e) {
                 em.getTransaction().begin();
-                em.merge(new TaskURL("/ses/test/anonymous", "anonymous and principal", "ses_test_anonymous", AppConfig.PROJECT, RequestMethod.POST,Access.ANONYMOUS));
+                TaskURL task = new TaskURL("/ses/test/anonymous", "anonymous and principal", "ses_test_anonymous", AppConfig.PROJECT, RequestMethod.POST,Access.ANONYMOUS);
+                task.setAuthorizationTypes(types);
+                em.merge(task);
                 em.getTransaction().commit();
             }
 
@@ -121,7 +127,9 @@ public class DBFiller {
                 taskQuery.getSingleResult();
             } catch (NoResultException e) {
                 em.getTransaction().begin();
-                em.merge(new TaskURL("/ses/test/principal_all", "anonymous and principal", "ses_test_principal_all", AppConfig.PROJECT));
+                TaskURL task = new TaskURL("/ses/test/principal_all", "anonymous and principal", "ses_test_principal_all", AppConfig.PROJECT);
+                task.setAuthorizationTypes(types);
+                em.merge(task);
                 em.getTransaction().commit();
             }
             try {
@@ -129,7 +137,9 @@ public class DBFiller {
                 taskQuery.getSingleResult();
             } catch (NoResultException e) {
                 em.getTransaction().begin();
-                em.merge(new TaskURL("/ses/test/principal_post", "anonymous and principal", "ses_test_principal_post", AppConfig.PROJECT,RequestMethod.POST,Access.PRINCIPAL));
+                TaskURL task = new TaskURL("/ses/test/principal_post", "anonymous and principal", "ses_test_principal_post", AppConfig.PROJECT,RequestMethod.POST,Access.PRINCIPAL);
+                task.setAuthorizationTypes(types);
+                em.merge(task);
                 em.getTransaction().commit();
             }
             try {
@@ -137,7 +147,9 @@ public class DBFiller {
                 taskQuery.getSingleResult();
             } catch (NoResultException e) {
                 em.getTransaction().begin();
-                em.merge(new TaskURL("/ses/test/matcher/**", "anonymous and principal", "ses_test_principal_post", AppConfig.PROJECT,RequestMethod.POST,Access.PRINCIPAL));
+                TaskURL task = new TaskURL("/ses/test/matcher/**", "anonymous and principal", "ses_test_principal_post", AppConfig.PROJECT,RequestMethod.POST,Access.PRINCIPAL);
+                task.setAuthorizationTypes(types);
+                em.merge(task);
                 em.getTransaction().commit();
             }
             LogProducerImpl.logStdOut("DB_Filler", "FILL MENU finished!!!");

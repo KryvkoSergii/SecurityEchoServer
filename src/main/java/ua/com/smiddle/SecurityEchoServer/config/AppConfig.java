@@ -1,6 +1,5 @@
 package ua.com.smiddle.SecurityEchoServer.config;
 
-import com.sun.org.glassfish.gmbal.Description;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
@@ -20,7 +19,6 @@ import ua.com.smiddle.logger.queue.LogQueue;
 import ua.com.smiddle.logger.queue.LogQueueImpl;
 import ua.com.smiddle.logger.settings.DebugLevelSource;
 import ua.com.smiddle.logger.storage.LogStorage;
-import ua.com.smiddle.security.config.DefaultSecurityConfig;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -30,7 +28,7 @@ import javax.sql.DataSource;
  * @project SecurityEchoServer
  */
 @Configuration
-@Import({DefaultSecurityConfig.class})
+@Import({SecurityConfig.class})
 @EnableWebMvc
 @ComponentScan("ua.com.smiddle")
 @PropertySource("classpath:application.properties")
